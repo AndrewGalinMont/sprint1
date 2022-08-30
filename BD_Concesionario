@@ -1,0 +1,125 @@
+-- --------------------------------------------------------
+-- Host:                         127.0.0.1
+-- Versión del servidor:         10.9.2-MariaDB - mariadb.org binary distribution
+-- SO del servidor:              Win64
+-- HeidiSQL Versión:             11.3.0.6295
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+-- Volcando estructura de base de datos para consesionario
+CREATE DATABASE IF NOT EXISTS `consesionario` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+USE `consesionario`;
+
+-- Volcando estructura para tabla consesionario.categoria
+CREATE TABLE IF NOT EXISTS `categoria` (
+  `catid` int(11) NOT NULL,
+  `catipo` varchar(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (`catid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Tabla categoria de los vehiculos.';
+
+-- Volcando datos para la tabla consesionario.categoria: ~1 rows (aproximadamente)
+DELETE FROM `categoria`;
+/*!40000 ALTER TABLE `categoria` DISABLE KEYS */;
+INSERT INTO `categoria` (`catid`, `catipo`) VALUES
+	(1, 'Deportivo');
+/*!40000 ALTER TABLE `categoria` ENABLE KEYS */;
+
+-- Volcando estructura para tabla consesionario.datospersonales
+CREATE TABLE IF NOT EXISTS `datospersonales` (
+  `datid` int(11) NOT NULL,
+  `usuid` int(11) NOT NULL,
+  `datnombre` varchar(50) NOT NULL DEFAULT '',
+  `datapellido` varchar(50) NOT NULL DEFAULT '',
+  `datipoid` varchar(50) NOT NULL DEFAULT '',
+  `datnumeroid` varchar(20) NOT NULL DEFAULT '',
+  `datelefono` varchar(20) NOT NULL DEFAULT '',
+  `datcorreo` varchar(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (`datid`),
+  KEY `usuarioid` (`usuid`),
+  CONSTRAINT `usuarioid` FOREIGN KEY (`usuid`) REFERENCES `usuario` (`usuid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Tabla de infomacion general sobre el cliente/administrador';
+
+-- Volcando datos para la tabla consesionario.datospersonales: ~1 rows (aproximadamente)
+DELETE FROM `datospersonales`;
+/*!40000 ALTER TABLE `datospersonales` DISABLE KEYS */;
+INSERT INTO `datospersonales` (`datid`, `usuid`, `datnombre`, `datapellido`, `datipoid`, `datnumeroid`, `datelefono`, `datcorreo`) VALUES
+	(1, 1, 'MARIA', 'PEREZ', 'CC', '110345435', '3097645645', 'maria.perez@gmail.com');
+/*!40000 ALTER TABLE `datospersonales` ENABLE KEYS */;
+
+-- Volcando estructura para tabla consesionario.rol
+CREATE TABLE IF NOT EXISTS `rol` (
+  `rolid` int(11) NOT NULL,
+  `roltipo` varchar(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (`rolid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Tabla en la cual se indicara los roles de las personas que ingresaran al sistema.';
+
+-- Volcando datos para la tabla consesionario.rol: ~2 rows (aproximadamente)
+DELETE FROM `rol`;
+/*!40000 ALTER TABLE `rol` DISABLE KEYS */;
+INSERT INTO `rol` (`rolid`, `roltipo`) VALUES
+	(1, 'Administrador'),
+	(2, 'Comprador');
+/*!40000 ALTER TABLE `rol` ENABLE KEYS */;
+
+-- Volcando estructura para tabla consesionario.usuario
+CREATE TABLE IF NOT EXISTS `usuario` (
+  `usuid` int(11) NOT NULL,
+  `usulogin` varchar(50) NOT NULL DEFAULT '',
+  `usupassword` varchar(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (`usuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Tabla de los usuarios, para realizar el ingreso al sistema.';
+
+-- Volcando datos para la tabla consesionario.usuario: ~1 rows (aproximadamente)
+DELETE FROM `usuario`;
+/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+INSERT INTO `usuario` (`usuid`, `usulogin`, `usupassword`) VALUES
+	(1, 'MariaPerez1990', '1234');
+/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
+
+-- Volcando estructura para tabla consesionario.usuario_rol
+CREATE TABLE IF NOT EXISTS `usuario_rol` (
+  `rolid` int(11) NOT NULL,
+  `usuid` int(11) NOT NULL,
+  KEY `usuid` (`usuid`),
+  KEY `rolid` (`rolid`),
+  CONSTRAINT `rolid` FOREIGN KEY (`rolid`) REFERENCES `rol` (`rolid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `usuid` FOREIGN KEY (`usuid`) REFERENCES `usuario` (`usuid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Tabla de la union tabla usuario y tabla rol';
+
+-- Volcando datos para la tabla consesionario.usuario_rol: ~1 rows (aproximadamente)
+DELETE FROM `usuario_rol`;
+/*!40000 ALTER TABLE `usuario_rol` DISABLE KEYS */;
+INSERT INTO `usuario_rol` (`rolid`, `usuid`) VALUES
+	(1, 1);
+/*!40000 ALTER TABLE `usuario_rol` ENABLE KEYS */;
+
+-- Volcando estructura para tabla consesionario.vehiculo
+CREATE TABLE IF NOT EXISTS `vehiculo` (
+  `vnummotor` varchar(20) NOT NULL,
+  `catid` int(11) NOT NULL DEFAULT 0,
+  `vehmodelo` int(11) NOT NULL DEFAULT 0,
+  `vehmarca` varchar(50) NOT NULL DEFAULT '0',
+  `vehprecio` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`vnummotor`),
+  KEY `catid` (`catid`),
+  CONSTRAINT `catid` FOREIGN KEY (`catid`) REFERENCES `categoria` (`catid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Tabla con datos del vehiculo.';
+
+-- Volcando datos para la tabla consesionario.vehiculo: ~1 rows (aproximadamente)
+DELETE FROM `vehiculo`;
+/*!40000 ALTER TABLE `vehiculo` DISABLE KEYS */;
+INSERT INTO `vehiculo` (`vnummotor`, `catid`, `vehmodelo`, `vehmarca`, `vehprecio`) VALUES
+	('LC162FM', 1, 2020, 'KIA', 29000000);
+/*!40000 ALTER TABLE `vehiculo` ENABLE KEYS */;
+
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
